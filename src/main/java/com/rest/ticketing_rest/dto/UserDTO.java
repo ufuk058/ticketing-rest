@@ -1,5 +1,6 @@
 package com.rest.ticketing_rest.dto;
 
+import com.fasterxml.jackson.annotation.JsonProperty;
 import com.rest.ticketing_rest.enums.Gender;
 import jakarta.validation.constraints.*;
 import jakarta.validation.constraints.Size;
@@ -34,9 +35,11 @@ public class UserDTO {
     @Pattern(regexp = "(?=.*\\d)(?=.*[a-z])(?=.*[A-Z]).{4,}", message = "The password must be at " +
             "least 4 characters long and include at least 1 uppercase letter, 1 lowercase letter " +
             "and 1 digit")
+    @JsonProperty(access = JsonProperty.Access.WRITE_ONLY)
     private String passWord;
 
     @NotBlank(message = "Passwords should match")
+    @JsonProperty(access = JsonProperty.Access.WRITE_ONLY)
     private String confirmPassWord;
 
     @NotNull(message = "Please select a Gender")
