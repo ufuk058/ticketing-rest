@@ -12,7 +12,7 @@ public interface ProjectService {
 
     void save(ProjectDTO project);
 
-    void update(ProjectDTO project);
+    void update(String projectCode,ProjectDTO project);
 
     void delete(String projectCode);
 

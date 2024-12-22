@@ -1,4 +1,4 @@
-package com.rest.ticketing_rest;
+package com.rest.ticketing_rest.controller;
 
 import com.rest.ticketing_rest.dto.ResponseWrapper;
 import com.rest.ticketing_rest.dto.UserDTO;
