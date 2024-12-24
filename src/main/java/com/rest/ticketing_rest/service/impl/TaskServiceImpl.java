@@ -62,16 +62,18 @@ public class TaskServiceImpl implements TaskService {
     }
 
     @Override
-    public void update(TaskDTO task) {
+    public void update(String taskCode, TaskDTO task) {
 
-        Optional<Task> foundTask = taskRepository.findById(task.getId());
+        Task foundTask = taskRepository.findByTaskCode(taskCode);
 
         Task convertedTask = mapperUtil.convert(task,new Task());
 
-        if (foundTask.isPresent()){
+        if (foundTask!=null){
 
-            convertedTask.setAssignedDate(foundTask.get().getAssignedDate());
-            convertedTask.setTaskStatus(task.getTaskStatus() == null ? foundTask.get().getTaskStatus() : task.getTaskStatus());
+            convertedTask.setAssignedDate(foundTask.getAssignedDate());
+            convertedTask.setTaskStatus(task.getTaskStatus() == null ? foundTask.getTaskStatus() : task.getTaskStatus());
+            convertedTask.setTaskCode(taskCode);
+            convertedTask.setId(foundTask.getId());
 
             taskRepository.save(convertedTask);
 
@@ -79,13 +81,13 @@ public class TaskServiceImpl implements TaskService {
     }
 
     @Override
-    public void delete(Long id) {
+    public void delete(String taskCode) {
 
-        Optional<Task> foundTask = taskRepository.findById(id);
+        Task foundTask = taskRepository.findByTaskCode(taskCode);
 
-        if (foundTask.isPresent()){
-            foundTask.get().setIsDeleted(true);
-            taskRepository.save(foundTask.get());
+        if (foundTask!=null){
+            foundTask.setIsDeleted(true);
+            taskRepository.save(foundTask);
         }
 
     }
@@ -107,7 +109,7 @@ public class TaskServiceImpl implements TaskService {
 
         List<Task> tasksToDelete = taskRepository.findAllByProject(mapperUtil.convert(project,new Project()));
 
-        tasksToDelete.forEach(task -> delete(task.getId()));
+        tasksToDelete.forEach(task -> delete(task.getTaskCode()));
     }
 
     @Override
@@ -121,7 +123,7 @@ public class TaskServiceImpl implements TaskService {
 
             taskDTO.setTaskStatus(Status.COMPLETE);
 
-            update(taskDTO);
+            update(taskDTO.getTaskCode(),taskDTO);
 
         });
     }
@@ -152,6 +154,13 @@ public class TaskServiceImpl implements TaskService {
         List<Task> tasks = taskRepository.findAllByTaskStatusIsNotAndAssignedEmployee(Status.COMPLETE,mapperUtil.convert(employee,new User()) );
 
         return tasks.stream().map(task -> mapperUtil.convert(task,new TaskDTO())).collect(Collectors.toList());
+    }
+
+    @Override
+    public TaskDTO findByTaskCode(String taskCode) {
+        Task task = taskRepository.findByTaskCode(taskCode);
+
+        return mapperUtil.convert(task, new TaskDTO());
     }
 
 }
