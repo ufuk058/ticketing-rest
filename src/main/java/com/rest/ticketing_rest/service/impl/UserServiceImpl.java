@@ -1,12 +1,15 @@
 package com.rest.ticketing_rest.service.impl;
 
 import com.rest.ticketing_rest.dto.ProjectDTO;
+import com.rest.ticketing_rest.dto.RoleDTO;
 import com.rest.ticketing_rest.dto.TaskDTO;
 import com.rest.ticketing_rest.dto.UserDTO;
+import com.rest.ticketing_rest.entity.Role;
 import com.rest.ticketing_rest.entity.User;
 import com.rest.ticketing_rest.mapper.MapperUtil;
 import com.rest.ticketing_rest.repository.UserRepository;
 import com.rest.ticketing_rest.service.ProjectService;
+import com.rest.ticketing_rest.service.RoleService;
 import com.rest.ticketing_rest.service.TaskService;
 import com.rest.ticketing_rest.service.UserService;
 import org.springframework.context.annotation.Lazy;
@@ -23,12 +26,14 @@ public class UserServiceImpl implements UserService {
     private final MapperUtil mapperUtil;
     private final ProjectService projectService;
     private final TaskService taskService;
+    private final RoleService roleService;
 
-    public UserServiceImpl(UserRepository userRepository, MapperUtil mapperUtil, @Lazy ProjectService projectService, @Lazy TaskService taskService) {
+    public UserServiceImpl(UserRepository userRepository, MapperUtil mapperUtil, @Lazy ProjectService projectService, @Lazy TaskService taskService, RoleService roleService) {
         this.userRepository = userRepository;
         this.mapperUtil = mapperUtil;
         this.projectService = projectService;
         this.taskService = taskService;
+        this.roleService = roleService;
     }
 
     @Override
@@ -50,6 +55,7 @@ public class UserServiceImpl implements UserService {
     @Override
     public void save(UserDTO user) {
 
+        user.setRole(roleService.findByDescription(user.getRole().getDescription()));
         userRepository.save(mapperUtil.convert(user,new User()));
     }
 
@@ -62,6 +68,8 @@ public class UserServiceImpl implements UserService {
 
         updatedUser.setId(foundUser.getId());
         updatedUser.setUserName(username);
+        Role role= mapperUtil.convert(roleService.findByDescription(user.getRole().getDescription()),new Role());
+        updatedUser.setRole(role);
 
         userRepository.save(updatedUser);
     }

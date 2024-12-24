@@ -1,5 +1,6 @@
 package com.rest.ticketing_rest.dto;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import com.rest.ticketing_rest.enums.Gender;
 import jakarta.validation.constraints.*;
@@ -12,6 +13,7 @@ import lombok.NoArgsConstructor;
 @NoArgsConstructor
 @AllArgsConstructor
 public class UserDTO {
+   @JsonIgnore
     private Long id;
 
     @NotBlank(message = "First Name is a required field")

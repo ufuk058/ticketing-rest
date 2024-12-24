@@ -1,5 +1,6 @@
 package com.rest.ticketing_rest.dto;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.annotation.JsonProperty;
@@ -22,6 +23,7 @@ import java.time.LocalDate;
 @JsonIgnoreProperties(ignoreUnknown = true)
 public class ProjectDTO {
 
+    @JsonIgnore
     private Long id;
 
     @NotBlank(message = "Project Name is a required field")

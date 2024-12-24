@@ -52,6 +52,7 @@ public class ProjectServiceImpl implements ProjectService {
     public void save(ProjectDTO project) {
 
         project.setProjectStatus(Status.OPEN);
+        project.setAssignedManager(userService.findByUserName(project.getAssignedManager().getUserName()));
         Project convertedProject = mapperUtil.convert(project,new Project());
         projectRepository.save(convertedProject);
 
@@ -68,6 +69,8 @@ public class ProjectServiceImpl implements ProjectService {
 
         convertedProject.setProjectStatus(foundProject.getProjectStatus());
         convertedProject.setProjectCode(projectCode);
+        User assignedManager= mapperUtil.convert(userService.findByUserName(project.getAssignedManager().getUserName()),new User());
+        convertedProject.setAssignedManager(assignedManager);
 
         projectRepository.save(convertedProject);
 
