@@ -9,6 +9,7 @@ import com.rest.ticketing_rest.entity.User;
 import com.rest.ticketing_rest.enums.Status;
 import com.rest.ticketing_rest.mapper.MapperUtil;
 import com.rest.ticketing_rest.repository.TaskRepository;
+import com.rest.ticketing_rest.service.KeycloakService;
 import com.rest.ticketing_rest.service.ProjectService;
 import com.rest.ticketing_rest.service.TaskService;
 import com.rest.ticketing_rest.service.UserService;
@@ -28,12 +29,14 @@ public class TaskServiceImpl implements TaskService {
     private final MapperUtil mapperUtil;
     private final UserService userService;
     private final ProjectService projectService;
+    private final KeycloakService keycloakService;
 
-    public TaskServiceImpl(TaskRepository taskRepository, MapperUtil mapperUtil, UserService userService,@Lazy ProjectService projectService) {
+    public TaskServiceImpl(TaskRepository taskRepository, MapperUtil mapperUtil, UserService userService, @Lazy ProjectService projectService, KeycloakService keycloakService) {
         this.taskRepository = taskRepository;
         this.mapperUtil = mapperUtil;
         this.userService = userService;
         this.projectService = projectService;
+        this.keycloakService = keycloakService;
     }
 
     @Override
@@ -139,7 +142,7 @@ public class TaskServiceImpl implements TaskService {
     @Override
     public List<TaskDTO> listAllTasksByStatusIsNot(Status status) {
 
-        UserDTO loggedInUser = userService.findByUserName("john@employee.com");
+        UserDTO loggedInUser = userService.findByUserName(keycloakService.getLoggedInUsername());
 
         List<Task> tasks = taskRepository.findAllByTaskStatusIsNotAndAssignedEmployee(status, mapperUtil.convert(loggedInUser,new User()));
 
@@ -149,7 +152,7 @@ public class TaskServiceImpl implements TaskService {
     @Override
     public List<TaskDTO> listAllTasksByStatus(Status status) {
 
-        UserDTO loggedInUser = userService.findByUserName("john@employee.com");
+        UserDTO loggedInUser = userService.findByUserName(keycloakService.getLoggedInUsername());
 
         List<Task> tasks = taskRepository.findAllByTaskStatusAndAssignedEmployee(status, mapperUtil.convert(loggedInUser,new User()));
 
