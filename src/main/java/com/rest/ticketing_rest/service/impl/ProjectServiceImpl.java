@@ -7,6 +7,7 @@ import com.rest.ticketing_rest.entity.User;
 import com.rest.ticketing_rest.enums.Status;
 import com.rest.ticketing_rest.mapper.MapperUtil;
 import com.rest.ticketing_rest.repository.ProjectRepository;
+import com.rest.ticketing_rest.service.KeycloakService;
 import com.rest.ticketing_rest.service.ProjectService;
 import com.rest.ticketing_rest.service.TaskService;
 import com.rest.ticketing_rest.service.UserService;
@@ -23,12 +24,14 @@ public class ProjectServiceImpl implements ProjectService {
     private final MapperUtil mapperUtil;
     private final UserService userService;
     private final TaskService taskService;
+    private final KeycloakService keycloakService;
 
-    public ProjectServiceImpl(ProjectRepository projectRepository, MapperUtil mapperUtil, UserService userService, TaskService taskService) {
+    public ProjectServiceImpl(ProjectRepository projectRepository, MapperUtil mapperUtil, UserService userService, TaskService taskService, KeycloakService keycloakService) {
         this.projectRepository = projectRepository;
         this.mapperUtil = mapperUtil;
         this.userService = userService;
         this.taskService = taskService;
+        this.keycloakService = keycloakService;
     }
 
 
@@ -105,7 +108,7 @@ public class ProjectServiceImpl implements ProjectService {
     @Override
     public List<ProjectDTO> listAllProjectDetails() {
 
-        UserDTO currentUser = userService.findByUserName("harold@manager.com");
+        UserDTO currentUser = userService.findByUserName(keycloakService.getLoggedInUsername());
 
         User user = mapperUtil.convert(currentUser,new User());
 
