@@ -1,6 +1,8 @@
 package com.rest.ticketing_rest.entity;
 
+import com.rest.ticketing_rest.service.KeycloakService;
 import jakarta.persistence.*;
+import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
@@ -9,6 +11,7 @@ import java.time.LocalDateTime;
 @Data
 @NoArgsConstructor
 @MappedSuperclass
+@EntityListeners(BaseEntityListener.class)
 public class BaseEntity {
 
     @Id
@@ -18,25 +21,14 @@ public class BaseEntity {
     @Column(updatable = false, nullable = false)
     private LocalDateTime insertDateTime;
     @Column(updatable = false, nullable = false)
-    private Long insertUserId;
+    private String insertUserUsername;
     @Column(nullable = false)
     private LocalDateTime lastUpdateDateTime;
     @Column(nullable = false)
-    private Long lastUpdateUserId;
+    private String lastUpdateUserUsername;
 
     private Boolean isDeleted = false;
 
-    @PrePersist
-    private void onPrePersist(){
-        insertDateTime = LocalDateTime.now();
-        lastUpdateDateTime = LocalDateTime.now();
-        insertUserId = 1L;
-        lastUpdateUserId = 1L;
-    }
 
-    @PreUpdate
-    private void onPreUpdate(){
-        lastUpdateDateTime = LocalDateTime.now();
-        lastUpdateUserId = 1L;
-    }
+
 }
