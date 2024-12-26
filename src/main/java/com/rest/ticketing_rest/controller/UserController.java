@@ -1,5 +1,6 @@
 package com.rest.ticketing_rest.controller;
 
+import com.rest.ticketing_rest.annotation.ExecutionTime;
 import com.rest.ticketing_rest.dto.ResponseWrapper;
 import com.rest.ticketing_rest.dto.UserDTO;
 import com.rest.ticketing_rest.service.UserService;
@@ -25,6 +26,7 @@ public class UserController {
         this.userService = userService;
     }
 
+    @ExecutionTime
     @GetMapping("/all")
     @Operation(summary = "Get Users")
     @ApiResponses(value={
