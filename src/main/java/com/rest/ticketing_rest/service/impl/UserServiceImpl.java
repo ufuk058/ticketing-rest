@@ -70,6 +70,7 @@ public class UserServiceImpl implements UserService {
         updatedUser.setUserName(username);
         Role role= mapperUtil.convert(roleService.findByDescription(user.getRole().getDescription()),new Role());
         updatedUser.setRole(role);
+        keycloakService.userUpdate(mapperUtil.convert(updatedUser,new UserDTO()));
 
         userRepository.save(updatedUser);
     }
