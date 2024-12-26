@@ -146,4 +146,18 @@ public class KeyCloakServiceImpl implements KeycloakService {
         usersResource.get(userId).resetPassword(credential);
 
     }
+
+    @Override
+    public void userDelete(String username) {
+
+        try(Keycloak keycloak = getKeycloakInstance()){
+            RealmResource realmResource = keycloak.realm(keycloakProperties.getRealm());
+            UsersResource userResource= realmResource.users();
+
+            List<UserRepresentation> userRepresentations= userResource.search(username);
+
+            String uid= userRepresentations.get(0).getId();
+            userResource.delete(uid);
+        }
+    }
 }
