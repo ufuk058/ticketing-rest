@@ -8,10 +8,7 @@ import com.rest.ticketing_rest.entity.Role;
 import com.rest.ticketing_rest.entity.User;
 import com.rest.ticketing_rest.mapper.MapperUtil;
 import com.rest.ticketing_rest.repository.UserRepository;
-import com.rest.ticketing_rest.service.ProjectService;
-import com.rest.ticketing_rest.service.RoleService;
-import com.rest.ticketing_rest.service.TaskService;
-import com.rest.ticketing_rest.service.UserService;
+import com.rest.ticketing_rest.service.*;
 import org.springframework.context.annotation.Lazy;
 import org.springframework.stereotype.Service;
 
@@ -27,13 +24,15 @@ public class UserServiceImpl implements UserService {
     private final ProjectService projectService;
     private final TaskService taskService;
     private final RoleService roleService;
+    private final KeycloakService keycloakService;
 
-    public UserServiceImpl(UserRepository userRepository, MapperUtil mapperUtil, @Lazy ProjectService projectService, @Lazy TaskService taskService, RoleService roleService) {
+    public UserServiceImpl(UserRepository userRepository, MapperUtil mapperUtil, @Lazy ProjectService projectService, @Lazy TaskService taskService, RoleService roleService, KeycloakService keycloakService) {
         this.userRepository = userRepository;
         this.mapperUtil = mapperUtil;
         this.projectService = projectService;
         this.taskService = taskService;
         this.roleService = roleService;
+        this.keycloakService = keycloakService;
     }
 
     @Override
@@ -56,6 +55,7 @@ public class UserServiceImpl implements UserService {
     public void save(UserDTO user) {
 
         user.setRole(roleService.findByDescription(user.getRole().getDescription()));
+        keycloakService.userCreate(user);
         userRepository.save(mapperUtil.convert(user,new User()));
     }
 
