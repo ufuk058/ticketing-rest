@@ -94,4 +94,56 @@ public class KeyCloakServiceImpl implements KeycloakService {
                 keycloakProperties.getMasterClient());
 
     }
+
+    @Override
+    public void userUpdate(UserDTO userDTO) {
+        try(Keycloak keycloak= getKeycloakInstance()){
+            RealmResource realmResource= keycloak.realm(keycloakProperties.getRealm());
+            UsersResource userResource= realmResource.users();
+            List<UserRepresentation> userRepresentations= userResource.search(userDTO.getUserName());
+
+            if(userRepresentations.isEmpty()){
+                throw new RuntimeException("User does not exist!");
+            }
+            UserRepresentation keyCloakUser= userRepresentations.get(0);
+            updateRoles(realmResource,keyCloakUser.getId(),userDTO.getRole().getDescription());
+            keyCloakUser.setFirstName(userDTO.getFirstName());
+            keyCloakUser.setLastName(userDTO.getLastName());
+
+            if(userDTO.getPassWord() != null && !userDTO.getPassWord().isEmpty()){
+
+                updatePassword(userResource,keyCloakUser.getId(),userDTO.getPassWord());
+            }
+
+            userResource.get(keyCloakUser.getId()).update(keyCloakUser);
+        }
+    }
+
+    private void updateRoles(RealmResource realmResource, String userId, String role){
+        ClientRepresentation appClient= realmResource.clients()
+                .findByClientId(keycloakProperties.getClientId()).get(0);
+
+        String clientId= appClient.getId();
+
+        List<RoleRepresentation> existingRoles= realmResource.users().get(userId)
+                .roles().clientLevel(clientId).listEffective();
+        existingRoles.forEach(existingRole ->
+                realmResource.users().get(userId)
+                        .roles().clientLevel(clientId).remove(List.of(existingRole)));
+
+        RoleRepresentation userClientRole= realmResource.clients().get(clientId)
+                .roles().get(role).toRepresentation();
+
+        realmResource.users().get(userId).roles().clientLevel(clientId)
+                .add(List.of(userClientRole));
+    }
+
+    private void updatePassword(UsersResource usersResource, String userId, String newPassword){
+        CredentialRepresentation credential= new CredentialRepresentation();
+        credential.setType(CredentialRepresentation.PASSWORD);
+        credential.setTemporary(false);
+        credential.setValue(newPassword);
+        usersResource.get(userId).resetPassword(credential);
+
+    }
 }
