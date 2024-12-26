@@ -86,6 +86,7 @@ public class UserServiceImpl implements UserService {
             user.setIsDeleted(true);
             user.setUserName(user.getUserName() + "-" + user.getId());
 
+            keycloakService.userDelete(username);
             userRepository.save(user);
         }
     }
