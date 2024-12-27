@@ -6,6 +6,8 @@ import com.rest.ticketing_rest.dto.TaskDTO;
 import com.rest.ticketing_rest.dto.UserDTO;
 import com.rest.ticketing_rest.entity.Role;
 import com.rest.ticketing_rest.entity.User;
+import com.rest.ticketing_rest.exception.UserAlreadyExistException;
+import com.rest.ticketing_rest.exception.UserNotFoundException;
 import com.rest.ticketing_rest.mapper.MapperUtil;
 import com.rest.ticketing_rest.repository.UserRepository;
 import com.rest.ticketing_rest.service.*;
@@ -51,12 +53,16 @@ public class UserServiceImpl implements UserService {
 
         User user = userRepository.findByUserNameAndIsDeleted(username, false);
 
+        if(user ==null) throw new UserNotFoundException("User not exist");
         return mapperUtil.convert(user,new UserDTO());
     }
 
     @Override
     public void save(UserDTO user) {
 
+        if(userRepository.findByUserNameAndIsDeleted(user.getUserName(),false) !=null){
+            throw new UserAlreadyExistException("User already exist");
+        }
         user.setRole(roleService.findByDescription(user.getRole().getDescription()));
         keycloakService.userCreate(user);
         user.setPassWord(passwordEncoder.encode(user.getPassWord()));
