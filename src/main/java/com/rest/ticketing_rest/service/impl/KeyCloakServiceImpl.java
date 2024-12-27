@@ -3,6 +3,7 @@ package com.rest.ticketing_rest.service.impl;
 import com.rest.ticketing_rest.config.KeycloakProperties;
 import com.rest.ticketing_rest.dto.UserDTO;
 //import com.rest.ticketing_rest.exception.UserNotFoundException;
+import com.rest.ticketing_rest.exception.UserNotFoundException;
 import com.rest.ticketing_rest.service.KeycloakService;
 import jakarta.ws.rs.core.Response;
 import org.keycloak.admin.client.Keycloak;
@@ -103,7 +104,7 @@ public class KeyCloakServiceImpl implements KeycloakService {
             List<UserRepresentation> userRepresentations= userResource.search(userDTO.getUserName());
 
             if(userRepresentations.isEmpty()){
-                throw new RuntimeException("User does not exist!");
+                throw new UserNotFoundException("User does not exist!");
             }
             UserRepresentation keyCloakUser= userRepresentations.get(0);
             updateRoles(realmResource,keyCloakUser.getId(),userDTO.getRole().getDescription());
