@@ -9,6 +9,7 @@ import io.swagger.v3.oas.annotations.media.Content;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.responses.ApiResponses;
 import io.swagger.v3.oas.annotations.tags.Tag;
+import jakarta.validation.Valid;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -54,7 +55,7 @@ public class UserController {
 
     @PostMapping("/create")
     @Operation(summary = "Create a new user")
-    public ResponseEntity<ResponseWrapper> createNewUser(@RequestBody UserDTO userDto){
+    public ResponseEntity<ResponseWrapper> createNewUser(@RequestBody @Valid UserDTO userDto){
         userService.save(userDto);
         return ResponseEntity.status(HttpStatus.CREATED).body(new ResponseWrapper("User-->"+userDto.getUserName()+" successfully created",
                 201,userDto));

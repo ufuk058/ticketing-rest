@@ -5,6 +5,7 @@ import com.rest.ticketing_rest.dto.ResponseWrapper;
 import com.rest.ticketing_rest.service.ProjectService;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
+import jakarta.validation.Valid;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -38,7 +39,7 @@ public class ProjectController {
 
     @PostMapping("/create")
     @Operation(summary = "Create a new project")
-    public ResponseEntity<ResponseWrapper> createProject(@RequestBody ProjectDTO projectDTO){
+    public ResponseEntity<ResponseWrapper> createProject(@RequestBody @Valid ProjectDTO projectDTO){
 
         projectService.save(projectDTO);
         return ResponseEntity.status(HttpStatus.CREATED).body(new ResponseWrapper("New project successfully created",201,projectDTO));

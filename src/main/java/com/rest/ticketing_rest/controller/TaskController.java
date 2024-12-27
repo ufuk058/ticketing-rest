@@ -6,6 +6,7 @@ import com.rest.ticketing_rest.enums.Status;
 import com.rest.ticketing_rest.service.TaskService;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
+import jakarta.validation.Valid;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -40,7 +41,7 @@ public class TaskController {
 
     @PostMapping("/create")
     @Operation(summary = "Create a new task")
-    public ResponseEntity<ResponseWrapper> createTask(@RequestBody TaskDTO taskDTO){
+    public ResponseEntity<ResponseWrapper> createTask(@RequestBody @Valid TaskDTO taskDTO){
 
         taskService.save(taskDTO);
         return ResponseEntity.status(HttpStatus.CREATED).body(new ResponseWrapper("New Task created",201, taskDTO));
